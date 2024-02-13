@@ -48,7 +48,7 @@ const formatDate = (date) => {
     <DataView :value="store.getOperaciones" :layout="'list'" :paginator="true" :rows="9" :sortOrder="sortOrder"
               :sortField="sortField">
       <template #list="slotProps">
-        <div class="col-12">
+        <div class="col-12 bg-black-alpha-50/500'">
           <div class="flex flex-row align-items-center p-3 w-full hoverable" role="button"  @click="closeDialog(slotProps.data)">
             <div class="flex-1 text-left">
               <div class="font-bold text-l">Ruta {{ slotProps.data.no_ruta }} - <strong class="text-primary">{{formatCurrency( slotProps.data.cobro)}} </strong></div>

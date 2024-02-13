@@ -17,7 +17,9 @@ export const useOperacionStore = defineStore({
     }),
     getters:{
         getOpFiltered(state) {
-            return state.operacions.filter(it => state.selectedFilter ? it.repartidor === state.selectedFilter : true );
+            let ss = state.operacions.filter(it => state.selectedFilter ? it.repartidor === state.selectedFilter : true );
+            console.log(ss)
+            return ss
         },
     },
     actions: {
@@ -25,6 +27,7 @@ export const useOperacionStore = defineStore({
             await fetchWrapper.post(`${baseUrl}`, operacion);
         },
         setFilter(id){
+            console.log(id)
           this.selectedFilter = id
         },
         async getAll() {

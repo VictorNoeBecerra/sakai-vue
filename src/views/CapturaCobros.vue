@@ -95,6 +95,7 @@ const showProducts = () => {
       header: 'Capturas de hoy',
       style: {
         width: '40rem',
+        display: 'flex'
       },
       breakpoints: {
         '960px': '75vw',

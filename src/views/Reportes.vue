@@ -48,7 +48,7 @@ const getDateInfo = (val, daysToAdd) => {
 const getReport = () => {
   const {value} = rangoDeReporte;
   console.log(rutaSeleccionada.value?.ruta, getDateInfo(value[0], 0), getDateInfo(value[1], 1))
-  store.setReport(getDateInfo(value[0], 0), getDateInfo(value[1], 1), rutaSeleccionada.value?.ruta)
+  store.setReport(getDateInfo(value[0], 0), getDateInfo(value[1], 1), selectedCity.value.code === 'RUT' ? rutaSeleccionada.value?.ruta : undefined )
       .then(data => {
         console.log('report ', data)
         if (!data) {
@@ -77,7 +77,7 @@ const getNamePdf = (ruta) => {
   const _f = 'D-MMM-YY'
   return selectedCity.value.code === 'GEN' ?
       `General_${getDateF(_f, rangoDeReporte.value[0])}`
-      :`ruta-${ruta}_${getDateF(_f, rangoDeReporte.value[0])}_${getDateF(_f, rangoDeReporte.value[0])}`
+      : `ruta-${ruta}_${getDateF(_f, rangoDeReporte.value[0])}_${getDateF(_f, rangoDeReporte.value[0])}`
 }
 
 function exportFile() {
@@ -134,7 +134,7 @@ function exportFile() {
   });
   doc.setFontSize(22);
   doc.setFont("helvetica", "normal");
-  
+
   doc.setDrawColor('#445262')
   doc.text(store.getOperaciones[0].nombres + ' R-' + store.getOperaciones[0].ruta, 10, 10);
   doc.setFontSize(10);
@@ -171,7 +171,7 @@ const formatDate = (date) => {
   return moment(date).format('LLLL')
 }
 
-const selectedCity = ref( {name: 'Por ruta', code: 'RUT'});
+const selectedCity = ref({name: 'Por ruta', code: 'RUT'});
 const cities = ref([
   {name: 'General', code: 'GEN'},
   {name: 'Por ruta', code: 'RUT'}
@@ -193,7 +193,7 @@ const cities = ref([
             :value="store.getOperaciones"
             dataKey="id"
             ref="dt"
-scroll-height="55vh"
+            scroll-height="55vh"
             :tableProps="{ style: { minWidth: '650px' } }" style="overflow: auto"
 
             class="p-datatable">
@@ -225,7 +225,8 @@ scroll-height="55vh"
                     <label for="ruta">Ruta</label>
                 </span>
                 </div>
-                <Button icon="pi pi-plus" :loading="store.isLoading" @click="getReport" :disabled="selectedCity.code === 'RUT' && !rutaSeleccionada"
+                <Button icon="pi pi-plus" :loading="store.isLoading" @click="getReport"
+                        :disabled="selectedCity.code === 'RUT' && !rutaSeleccionada"
                         label="Generar"></Button>
               </div>
             </div>
@@ -326,32 +327,24 @@ scroll-height="55vh"
           <template #footer>
             <template v-if="store.getOperaciones.length > 0">
               <div class="footer-cont">
-                <div class="d-flex">
-                  <div>
-                    <p class="m-0"><span
-                        class="font-500 text-400">Comision total:  </span>{{
-                        formatCurrency(store.getTotalOperacionesComision)
-                      }}.
-                    </p>
+                <div class="flex flex-column">
+                  <div class="inline-flex justify-content-between">
+                    <span class="font-500 text-400">Comision total:  </span>
+                    <p class="m-0">{{ formatCurrency(store.getTotalOperacionesComision) }}</p>
                   </div>
-                  <div>
-                    <p class="m-0"><span
-                        class="font-500 text-400">Utilidad total: </span>{{
-                        formatCurrency(store.getTotalOperacionesUtilidad)
-                      }}.
-                    </p>
-                    <p class="m-0"><span
-                        class="font-500 text-400">Total Kilo-Litros: </span>
-                      <b class="text-primary">
-                        {{
-                          store.getTotalKlts
-                        }}.
-                      </b>
-                    </p>
+                  <div class="inline-flex justify-content-between">
+                    <span class="font-500 text-400">Utilidad total: </span>
+                    <p class="m-0">{{ formatCurrency(store.getTotalOperacionesUtilidad) }}</p>
                   </div>
-                  <div class="border-top-1 border-gray-200">
-                    <p class="m-0"><span class="font-500 text-400">Cobro total: </span>
-                      <span class="text-xl">{{ formatCurrency(store.getTotalOperacionesCobro) }}</span>. </p>
+                  <div class="inline-flex justify-content-between">
+                    <span class="font-500 text-400">Total Kilo-Litros: </span>
+                    <p class="m-0"><b class="text-primary">{{ store.getTotalKlts }}</b></p>
+                  </div>
+                  <div class="border-top-1 border-gray-200 inline-flex justify-content-between">
+                    <p class="m-0 mr-4">
+                      <span class="font-500 text-400">Cobro total: </span>
+                    </p>
+                      <span class="text-xl">{{ formatCurrency(store.getTotalOperacionesCobro) }}</span>
                   </div>
                 </div>
                 <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
