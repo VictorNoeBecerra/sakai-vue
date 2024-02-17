@@ -116,11 +116,10 @@ const deleteProduct = async () => {
   let _id = '';
   if (currentP.key === 'Rutas') {
     _id = product.value.no_ruta
-  }else if(currentP.key === 'Productos') {
+  } else if (currentP.key === 'Productos') {
 
     _id = product.value.code
-  }
-  else {
+  } else {
     _id = product.value.id
   }
   await store.delete(currentP.routeApi, _id)
@@ -153,8 +152,7 @@ const saveProduct = async () => {
     if (isEditing.value === true) {
       console.log('editing')
       await store.update(currentP.routeApi, product.value.code, cas)
-    }
-    else {
+    } else {
       console.log('register', cas)
       await store.register(currentP.routeApi, cas);
     }
@@ -164,10 +162,9 @@ const saveProduct = async () => {
 
     if (isEditing.value === true) {
       console.log('editing')
-    await store.update(currentP.routeApi, product.value.no_ruta, body)
+      await store.update(currentP.routeApi, product.value.no_ruta, body)
 
-    }
-    else {
+    } else {
       console.log('register', body)
       await store.register(currentP.routeApi, body);
     }
@@ -391,7 +388,7 @@ watch(
             <div class="field col">
               <label for="comision">$ comision</label>
               <InputNumber id="comision" v-model="product.comision" mode="currency"
-                           :min-fraction-digits="3"  currency="MXN" lolocale="es-MX"
+                           :min-fraction-digits="3" currency="MXN" lolocale="es-MX"
                            console="es-MX"
                            :class="{ 'p-invalid': submitted && !product.comision }" :required="true"/>
               <small class="p-invalid" v-if="submitted && !product.comision">Price is required.</small>

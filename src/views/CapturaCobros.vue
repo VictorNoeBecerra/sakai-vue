@@ -1,6 +1,8 @@
 <!-- eslint-disable prettier/prettier -->
 <!-- eslint-disable prettier/prettier -->
 <script setup>
+import moment from "moment";
+
 moment.locale('es-mx');
 import AutoComplete from 'primevue/autocomplete';
 import { useToast } from 'primevue/usetoast';
@@ -158,7 +160,7 @@ const showProducts = () => {
 
 const fetchCatalogos = () => {
   store.setProducts('productos');
-  store.setRepartidores('repartidores/aviables');
+  store.setRepartidores('repartidores/aviables?day='+moment().format('YYYY-MM-DD'));
   storeReport.setOperacionesCount(moment().format('YYYY-MM-DD'), moment().add(1, 'day').format('YYYY-MM-DD'))
 }
 

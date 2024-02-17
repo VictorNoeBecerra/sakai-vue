@@ -220,15 +220,15 @@ export const useDashboardStore = defineStore({
         async register(product) {
             await fetchWrapper.post(`${baseUrl}`, product);
         },
-        async getTopProducts() {
-            const products = await fetchWrapper.get(baseUrl + 'operations/totales');
+        async getTopProducts(day) {
+            const products = await fetchWrapper.get(baseUrl + 'operations/top');
             console.log('\t[dashboardStore::getTopProducts] ', products)
 
         },
-        async setOperationsVentas(dias) {
+        async setOperationsVentas(day, dias) {
             const itmBase = []
             const info = []
-            const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/ventas?weekDesfase=' + dias);
+            const itemsOperations = await fetchWrapper.get(baseUrl + 'operations/ventas?day='+ day +'&weekDesfase=' + dias);
 
             let agrupadoPorRepartidor = itemsOperations.reduce((result, {no_ruta, dte, total_klt}) => {
 
@@ -240,16 +240,26 @@ export const useDashboardStore = defineStore({
                 result[no_ruta][wd] = total_klt;
                 return result;
             }, {});
+let agrupadoPorRepartidor2 = itemsOperations.reduce((result, {no_ruta, dte, cobro}) => {
+
+                const wd = moment(dte).add(isProduction, 'days').weekday()
+                console.log('dayPos', no_ruta, wd, cobro);
+                if (!result[no_ruta])
+                    result[no_ruta] = [0, 0, 0, 0, 0, 0, 0];
+
+                result[no_ruta][wd] = cobro;
+                return result;
+            }, {});
 
 
             // console.log('\t[dashboardStore::getOperationsVentas] ', itemsOperations)
-            console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor)
+            console.log('\t[dashboardStore::getOperationsVentas->porRepartidor] ', agrupadoPorRepartidor2)
 
             for (const aKey in agrupadoPorRepartidor) {
                 // console.log('aKey', aKey, agrupadoPorRepartidor[aKey])
                 itmBase.push({
                     label: 'R-' + aKey,
-                    data: agrupadoPorRepartidor[aKey].filter((a, i) => i !== 1),
+                    data: agrupadoPorRepartidor2[aKey].filter((a, i) => i !== 1),
                     fill: false,
                     borderColor: colors[itmBase.length],
                     backgroundColor: colors2[itmBase.length],
@@ -280,13 +290,13 @@ export const useDashboardStore = defineStore({
             }, 1000)
         },
 
-        async getAll() {
+        async getAll(day) {
             // const documentStyle = getComputedStyle(document.documentElement);
             this.isLoading = true;
             this.operacions = {loading: true};
             try {
                 // this.labels = []
-                let totales = await fetchWrapper.get(baseUrl + 'operations/totales');
+                let totales = await fetchWrapper.get(baseUrl + 'operations/totales?day='+ day);
                 // let dats = await fetchWrapper.get(baseUrl + 'operations');
                 console.log(totales)
                 // let agrupadoPorFecha = dats.reduce((result, elemento) => {

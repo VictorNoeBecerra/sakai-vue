@@ -9,6 +9,7 @@ import {useLayout} from '@/layout/composables/layout';
 import { useToast } from "primevue/usetoast";
 import {useDashboardStore} from '@/stores'
 import {getCurrentColumns} from "@/shared/control";
+import moment from "moment";
 
 const store = useDashboardStore()
 const toast = useToast();
@@ -31,10 +32,10 @@ moment.updateLocale("es-mx", { week: {
   }});
 
 const setData = (param) => {
-  store.setOperationsVentas(semanaAtras.value)
+  store.setOperationsVentas(moment().format('YYYY-MM-DD'),semanaAtras.value)
   // store.setOperationsCierres()
   store.setProductsTOP()
-  store.getAll();
+  store.getAll(moment().format('YYYY-MM-DD'));
   console.log('setCurrentP-> ', store.getOperations)
 }
 onMounted(() => {
@@ -42,7 +43,7 @@ onMounted(() => {
   // chartData.value = setChartData();
   // chartOptions.value = setChartOptions();
 
-  setData()
+  setData(moment().format('YYYY-MM-DD'))
 
 });
 
@@ -160,7 +161,7 @@ const getTextSem = (dias)=>{
       <div class="ctrl-box">
         <button @click="(e)=>{
           semanaAtras = semanaAtras + 1
-          store.setOperationsVentas(semanaAtras)
+          store.setOperationsVentas(moment().format('YYYY-MM-DD'),semanaAtras)
         }" class="btn-dire">
           <i class="pi pi-chevron-left" ></i>
         </button>
@@ -169,7 +170,7 @@ const getTextSem = (dias)=>{
         </div>
         <button class="btn-dire" @click="(e)=>{
           semanaAtras > 0 ? semanaAtras = semanaAtras - 1 : null
-          store.setOperationsVentas(semanaAtras)
+          store.setOperationsVentas(moment().format('YYYY-MM-DD'),semanaAtras)
         }">
 
           <i class="pi pi-chevron-right" ></i>
@@ -199,7 +200,7 @@ const getTextSem = (dias)=>{
         <div class="ctrl-box">
           <button @click="(e)=>{
           semanaAtras = semanaAtras + 1
-          store.setOperationsVentas(semanaAtras)
+          store.setOperationsVentas(moment().format('YYYY-MM-DD'),semanaAtras)
         }" class="btn-dire">
             <i class="pi pi-chevron-left" ></i>
           </button>
@@ -208,7 +209,7 @@ const getTextSem = (dias)=>{
           </div>
           <button class="btn-dire" @click="(e)=>{
           semanaAtras > 0 ? semanaAtras = semanaAtras - 1 : null
-          store.setOperationsVentas(semanaAtras)
+          store.setOperationsVentas(moment().format('YYYY-MM-DD'),semanaAtras)
         }">
 
             <i class="pi pi-chevron-right" ></i>

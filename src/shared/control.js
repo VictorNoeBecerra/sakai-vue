@@ -30,6 +30,7 @@ let commonProperties = {
       {field: "description", header: "description"},
       {field: "precio_compra", header: "costo"},
       {field: "precio_lista", header: "precio"},
+      {field: "comision", header: "comision"},
       {field: "cant_caja", header: "Caja"},
       {field: "content", header: "Cont."},
       {field: "uM", header: "um"},
