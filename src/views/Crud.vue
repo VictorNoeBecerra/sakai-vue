@@ -2,7 +2,7 @@
 <script setup>
 import {getCurrentColumns} from "../shared/control";
 import {useCatalogosStore} from '@/stores'
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode, FilterOperator} from 'primevue/api';
 
 const frmat = txt => capitalize(txt).replaceAll('_', ' ')
 import {capitalize, onBeforeMount, onMounted, ref, watch} from 'vue';
@@ -17,6 +17,10 @@ const selectedProducts = ref(null);
 
 const filters = ref({
   global: {value: null, matchMode: FilterMatchMode.CONTAINS},
+  'precio_lista': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
+  'precio_costo': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
+  'comision': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
+  'content': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]}
 });
 const statuses = ref([
   {label: 'INSTOCK', value: 'instock'},
@@ -84,6 +88,8 @@ onBeforeMount(() => {
 onMounted(() => {
   console.log('Mounted')
 })
+
+
 const editProduct = (editProduct) => {
   product.value = {...editProduct};
   isEditing.value = true
@@ -132,7 +138,7 @@ const saveProduct = async () => {
   console.log('saveProduct', product.value, currentP)
   if (product.value.id) {
     let body = {}
-    if (currentP.key === 'Repartidores') {
+    if (currentP.value.key === 'Repartidores') {
       const {ruta, sexo, nombres, edad} = product.value;
       body = {
         sexo: sexo.value || sexo,
@@ -140,12 +146,11 @@ const saveProduct = async () => {
         nombres,
         edad
       }
-    }
-    else{
+    } else {
       body = product.value
     }
-    await store.update(currentP.routeApi, product.value.id, body)
-  } else if (currentP.key === 'Productos') {
+    await store.update(currentP.value.routeApi, product.value.id, body)
+  } else if (currentP.value.key === 'Productos') {
     const body = product.value;
     console.log(body)
     const cas = {
@@ -164,26 +169,26 @@ const saveProduct = async () => {
     console.log('-----', isEditing.value, isEditing)
     if (isEditing.value === true) {
       console.log('editing')
-      await store.update(currentP.routeApi, product.value.code, cas)
+      await store.update(currentP.value.routeApi, product.value.code, cas)
     } else {
       console.log('register', cas)
-      await store.register(currentP.routeApi, cas);
+      await store.register(currentP.value.routeApi, cas);
     }
-  } else if (product.value.no_ruta && currentP.key === 'Rutas') {
+  } else if (product.value.no_ruta && currentP.value.key === 'Rutas') {
     const body = product.value;
     console.log(body)
 
     if (isEditing.value === true) {
       console.log('editing')
-      await store.update(currentP.routeApi, product.value.no_ruta, body)
+      await store.update(currentP.value.routeApi, product.value.no_ruta, body)
 
     } else {
       console.log('register', body)
-      await store.register(currentP.routeApi, body);
+      await store.register(currentP.value.routeApi, body);
     }
   } else {
     console.log('Repartidores')
-    switch (currentP.key) {
+    switch (currentP.value.key) {
       case 'grupos':
         const {familia} = product.value;
         console.log('--', familia)
@@ -210,11 +215,11 @@ const saveProduct = async () => {
         console.log('default')
         break
     }
-    await store.register(currentP.routeApi, product.value)
+    await store.register(currentP.value.routeApi, product.value)
   }
   productDialog.value = false;
-  await store.getAll(currentP.routeApi);
-  // setCurrentP(currentP.routeApi)
+  await store.getAll(currentP.value.routeApi);
+  // setCurrentP(currentP.value.routeApi)
 
 
   // if (product.value.name && product.value.name.trim() && product.value.price) {
@@ -241,33 +246,36 @@ watch(
       setCurrentP(val)
     }
 );
+
 </script>
 
 <template>
   <div class="grid">
     <div class="col-12">
-      <div class="card">
-        <h5>{{ currentP.title }}</h5>
+      <div class="card p-2 py-3">
+        <h5 class="px-4">{{ currentP.title }}</h5>
 
         <DataTable
             v-model:filters="filters"
             :value="store.dataCatalog"
-            :paginator="true"
-            ref="dt"
-            :rows="13"
-            class="p-data-table-sm"
-            dataKey="id"
-            :rowHover="true"
             :key="currentP.key"
-            stripedRows
-            scrollable scrollHeight="10%"
-            :loading="store.isLoading">
+            :loading="store.isLoading"
+            :paginator="true"
+            :rowHover="true"
+            class="p-data-table-sm"
+            :rows="10"
+            dataKey="id"
+            filterDisplay="menu"
+            :filters="filters"
+            responsiveLayout="scroll"
+            :globalFilterFields="columns.map(c=> c.field)"
+        >
           <template #header>
             <div class="flex flex-wrap justify-content-between gap-2">
                 <span class="p-input-icon-left">
-            <i class="pi pi-search"/>
-            <InputText v-model="filters['global'].value" placeholder="Busqueda"/>
-        </span>
+                  <i class="pi pi-search"/>
+                  <InputText v-model="filters['global'].value" placeholder="Busqueda"/>
+                </span>
               <div class="formgroup-inline align-items-baseline">
                 <span class="p-buttonset">
                     <Button label="Registrar" size="small" :loading="store.isLoading" @click="openNew"
@@ -281,7 +289,8 @@ watch(
           </template>
           <template #empty> {{ currentP.title }} no tiene registros.</template>
           <template #loading> Cargando la información..</template>
-          <Column v-for="col of columns" dataType="numeric" :key="col.field" :field="col.field" :header="col.header">
+          <Column v-for="col of columns" :filterField="col.field" :key="col.field" :field="col.field"
+                  :header="col.header">
             <template v-if="'precio_lista' === col.field " #body="slotProps">
               <b> {{ formatCurrency(slotProps.data.precio_lista) }}</b>
             </template>
@@ -292,6 +301,9 @@ watch(
               <!--              <Checkbox :value="slotProps.data.autoservicio" readonly :binary="true"/>-->
               <b> {{ slotProps.data.autoservicio ? 'Sí' : 'No' }}</b>
 
+            </template>
+            <template v-if="['precio_lista', 'precio_compra', 'comision','content'].includes( col.field)" #filter="{ filterModel }">
+              <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US"/>
             </template>
 
           </Column>
