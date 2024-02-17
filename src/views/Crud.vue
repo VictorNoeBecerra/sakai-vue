@@ -36,9 +36,9 @@ const store = useCatalogosStore()
 
 const currentP = {}
 const genders = ref([
-  {name: 'Hombre', code: 'H'},
-  {name: 'Mujer', code: 'M'},
-  {name: 'Otro', code: 'O'}
+  {label: 'Hombre', value: 'H'},
+  {label: 'Mujer', value: 'M'},
+  {label: 'Otro', value: 'O'}
 ]);
 let columns = [
   {field: 'code', header: 'Code'},
@@ -129,9 +129,22 @@ const deleteProduct = async () => {
 }
 const saveProduct = async () => {
   submitted.value = true;
-  console.log('saveProduct', product.value)
+  console.log('saveProduct', product.value, currentP)
   if (product.value.id) {
-    await store.update(currentP.routeApi, product.value.id, product.value)
+    let body = {}
+    if (currentP.key === 'Repartidores') {
+      const {ruta, sexo, nombres, edad} = product.value;
+      body = {
+        sexo: sexo.value || sexo,
+        ruta: ruta.value || ruta,
+        nombres,
+        edad
+      }
+    }
+    else{
+      body = product.value
+    }
+    await store.update(currentP.routeApi, product.value.id, body)
   } else if (currentP.key === 'Productos') {
     const body = product.value;
     console.log(body)
@@ -169,6 +182,7 @@ const saveProduct = async () => {
       await store.register(currentP.routeApi, body);
     }
   } else {
+    console.log('Repartidores')
     switch (currentP.key) {
       case 'grupos':
         const {familia} = product.value;
@@ -182,10 +196,15 @@ const saveProduct = async () => {
         product.value.um_eq = um_eq.id
         break
       case 'Repartidores':
-        const {ruta, sexo} = product.value;
+        console.log('Repartidores')
         console.log('--', ruta, sexo)
-        product.value.ruta = ruta.no_ruta
-        product.value.sexo = sexo.code
+        const {ruta, sexo, nombres, edad} = product.value;
+        product.value = {
+          sexo: sexo.value,
+          ruta,
+          nombres,
+          edad
+        }
         break
       default:
         console.log('default')
@@ -354,6 +373,7 @@ watch(
             <Dropdown id="inventoryStatus" v-model="product.familia" :options="store.getFamilias" optionLabel="label"
                       placeholder="Selecciona la familia">
               <template #value="slotProps">
+                {{ slotProps }}
                 <div v-if="slotProps.value && slotProps.value.value">
                   <span :class="'product-badge status-' + slotProps.value.value">{{ slotProps.value.label }}</span>
                 </div>
@@ -399,16 +419,15 @@ watch(
           <div class="formgrid grid" v-if="['Repartidores'].includes(currentP.key)">
             <div class="field col">
               <label for="sexo">Genero</label>
-              <Dropdown id="sexo" v-model="product.sexo" :options="genders" optionLabel="name"
-                        placeholder="sexo">
+              <Dropdown id="sexo" v-model="product.sexo" :options="genders" optionLabel="value"
+                        placeholder="sexo" option-value="value">
                 <template #value="slotProps">
                   <div v-if="slotProps.value && slotProps.value.value">
                     <span :class="'product-badge status-' + slotProps.value.value">{{ slotProps.value.label }}</span>
                   </div>
                   <div v-else-if="slotProps.value && !slotProps.value.value">
                   <span :class="'product-badge status-' + slotProps.value.toString().toLowerCase()">{{
-                      // store.getGrupos.filter(f => f.id === slotProps.value)[0].label
-                      slotProps.value.name
+                      genders.filter(g => g.value === slotProps.value)[0].label
                     }}</span>
                   </div>
                   <span v-else>
@@ -427,7 +446,7 @@ watch(
           </div>
           <div class="field" v-if="['Repartidores'].includes(currentP.key)">
             <label for="ruta" class="mb-3">Ruta</label>
-            <Dropdown id="ruta" v-model="product.ruta" :options="store.getRutas" optionLabel="label"
+            <Dropdown id="ruta" v-model="product.ruta" :options="store.getRutas" optionLabel="value"
                       placeholder="Selecciona la ruta">
               <template #value="slotProps">
                 <div v-if="slotProps.value && slotProps.value.value">
