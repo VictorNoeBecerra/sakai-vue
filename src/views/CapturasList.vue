@@ -81,10 +81,12 @@ const formatCurrency = (value) => {
 
               <div class='col-3 text-center'>utilidad <p class="text-cant">
                 {{ formatCurrency(store.operacion.utilidad) || '--' }}</p></div>
-              <div class='col-3 text-center'>costos <p class="text-cant">
+              <div class='col-2 text-center'>costos <p class="text-cant">
                 {{ formatCurrency(store.operacion.costos) || '--' }}</p></div>
-              <div class='col-3 text-center'>comision <p class="text-cant">
+              <div class='col-2 text-center'>comision <p class="text-cant">
                 {{ formatCurrency(store.operacion.comision) || '--' }}</p></div>
+              <div class='col-2 text-center'>Klts <p class="text-cant">
+                {{ (store.operacion.totalMl / 1000).toFixed(2) || '--' }}</p></div>
               <div class='col-3 text-center'>Cobro <p class="text-cant">{{
                   formatCurrency(store.operacion.cobro) || '--'
                 }}</p></div>

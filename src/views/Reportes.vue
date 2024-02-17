@@ -182,7 +182,7 @@ const cities = ref([
   <Toast/>
 
   <div class="card">
-    <div class="d-flex justify-content-between w-100 mb-4">
+    <div class="d-flex justify-content-between w-100 mb-1">
       <div class="flex-auto bg-light">
         <h5>Reportes</h5>
       </div>
@@ -338,13 +338,13 @@ const cities = ref([
                   </div>
                   <div class="inline-flex justify-content-between">
                     <span class="font-500 text-400">Total Kilo-Litros: </span>
-                    <p class="m-0"><b class="text-primary">{{ store.getTotalKlts }}</b></p>
+                    <p class="m-0"><b class="text-primary">{{  store.getTotalKlts.toFixed(2) }}</b></p>
                   </div>
                   <div class="border-top-1 border-gray-200 inline-flex justify-content-between">
                     <p class="m-0 mr-4">
                       <span class="font-500 text-400">Cobro total: </span>
                     </p>
-                      <span class="text-xl">{{ formatCurrency(store.getTotalOperacionesCobro) }}</span>
+                      <span class="text-xl">{{  formatCurrency(store.getTotalOperacionesCobro) }}</span>
                   </div>
                 </div>
                 <Button label="Guardar" size="small" class="mt-2" :loading="store.isLoading" @click="exportFile"
