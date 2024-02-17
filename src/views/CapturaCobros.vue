@@ -41,6 +41,7 @@ const columns = ref([
   { field: 'regTotal', header: 'Reg. Total' },
   { field: 'venta', header: 'Venta Total' },
   { field: 'saldo', header: 'Saldo venta' },
+  { field: 'action', header: 'action' },
 ]);
 const filteredProducts = ref([]);
 const operationEditing = ref({})
@@ -111,7 +112,7 @@ const showProducts = () => {
     onClose: (options) => {
       const data = options.data;
       if (data) {
-        console.log(data)
+    // console.log(data)
         const { id, items, no_ruta } = data;
         operationEditing.value = { ...data };
         rutaSeleccionada.value = no_ruta
@@ -224,7 +225,7 @@ const onCellEditComplete = (event) => {
 
   switch (field) {
     case 'code':
-      console.log(data, newValue, field,)
+  // console.log(data, newValue, field,)
       if (newValue.trim().length > 0)
         data[field] = newValue;
       else
@@ -272,7 +273,7 @@ const selectOne = (event, field) => {
         filteredProducts.value = [...store.getProducts.slice(0, 5)]
         // store.quitProd(event.value);
         showToast('info', 'Código añadido', `Se añadió ${description} al renglón correctamente.`, 2000)
-        console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
+    // console.log('----------add row', event, '\n', field, '\n', detalleCobro.value[key])
       }
     }
   } else {
@@ -343,7 +344,7 @@ const handleFocus = (e, inx) => {
     const { sourceCapabilities, relatedTarget } = e
     // console.log(e,value)
     let { code } = detalleCobro.value[inx]
-    console.log('sourceCapabilities: ', sourceCapabilities, 'relatedTarget: ', relatedTarget)
+// console.log('sourceCapabilities: ', sourceCapabilities, 'relatedTarget: ', relatedTarget)
     let noneValid = ['focus p-toast-icon-close p-link', 'focus p-inputtext p-component p-inputnumber-input'].includes(e.relatedTarget?.className)
     // console.log('\tfocus', noneValid)
     if (typeof code === "object" && sourceCapabilities && !noneValid) {
@@ -526,6 +527,48 @@ const confirmLeaveCurrentOp = (event) => {
   }
 
 };
+
+const deleteItem = (data) => {
+
+  const items = detalleCobro.value
+  const index = items.findIndex(s => s.key === data.key)
+
+  if(data.id){
+// console.log('Eliminar: item_op con id: ', data.id)
+    store.deleteItemOp(data.id)
+  }
+  items.splice(index, 1);
+  detalleCobro.value = items.map((itm, ins)=> {
+    return Object.assign(itm, {key:ins})
+  })
+  showToast('warn', 'Elemento retirado', `Se quitó el producto correctamente de la operacion.`, 8000)
+
+  console.log(detalleCobro.value, data, index)
+}
+const reset = (data) => {
+  const {key} = data
+  let items = [...detalleCobro.value]
+  items.splice(key, 1);
+
+  detalleCobro.value = items.concat({
+    key,
+    code: "",
+    uC: 1,
+    pL: 0,
+    salCj: 0,
+    salPz: 0,
+    salTotal: 0,
+    regCj: 0,
+    regPz: 0,
+    regTotal: 0,
+    venta: 0,
+    saldo: 0
+  })
+  showToast('warn', 'Elemento reseteado', `Se reseteó el producto correctamente de la operacion.`, 8000)
+
+  console.log(detalleCobro.value, data )
+}
+
 const rowStyle = (data) => {
   if (operationEditing.value.id) {
 
@@ -647,6 +690,11 @@ const formatDate = (date) => {
                   :max="field === 'regCj' ? data.salCj : (data.salCj === data.regCj ? data.salPz : data.uC)"
                   v-model="data[field]" :disabled="rutaSeleccionada === null || data['salTotal'] === 0" />
 
+              </template>
+              <template v-else-if="['action'].includes(field)">
+                <Button v-if="data.key === detalleCobro.length-1" :disabled="data.code === ''" type="button" severity="secondary"  icon="pi pi-refresh" :loading="store.isLoading" @click="()=>{reset(data)}" />
+                <Button v-else type="button"  :icon="data.id ? 'pi pi-trash' : 'pi pi-delete-left'" :loading="store.isLoading" severity="secondary" @click="()=>{deleteItem(data)}" />
+                {{data.key}}
               </template>
               <!-- COLUMNA A MOSTRAR CUANDO INVOLUCRAMOS VENTA Y SALDO Ó DINERO PUES!! -->
               <template v-else>

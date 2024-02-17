@@ -36,10 +36,10 @@ const setData = (param) => {
   // store.setOperationsCierres()
   store.setProductsTOP()
   store.getAll(moment().format('YYYY-MM-DD'));
-  console.log('setCurrentP-> ', store.getOperations)
+// console.log'setCurrentP-> ', store.getOperations)
 }
 onMounted(() => {
-  console.log(moment().startOf('week').format('LLLL'))
+// console.logmoment().startOf('week').format('LLLL'))
   // chartData.value = setChartData();
   // chartOptions.value = setChartOptions();
 
@@ -57,7 +57,7 @@ const getTextSem = (dias)=>{
 
   const baseDate = moment().subtract((Number(dias) || 0), 'weeks')
   const start = baseDate.startOf('week').format(_f), end = baseDate.endOf('week').format(_f);
-  console.log(start, end)
+// console.logstart, end)
   return start + ' - ' + end
 }
 

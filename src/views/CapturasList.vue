@@ -158,10 +158,10 @@ const formatCurrency = (value) => {
 }
 
 .p-dataview-content > div {
-  width: 20rem;
+  width: 100%;
   background: #FAFAFA;
   flex-direction: row;
-  max-height: 58vh;
+  max-height: 80vh;
   overflow: auto;
 }
 

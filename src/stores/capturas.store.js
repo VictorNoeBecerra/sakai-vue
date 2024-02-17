@@ -139,7 +139,7 @@ export const useCaptuaraStore = defineStore("capturas", {
         setSelectedProducts(items) {
             this.productsSelected = [...items.value.filter(f=> typeof f === 'object').map(d => d.code)]
             
-            console.log(this.productsSelected);
+          // console.logthis.productsSelected);
         },
         async setRutas(frgm) {
             this.loading = true;
@@ -203,6 +203,24 @@ export const useCaptuaraStore = defineStore("capturas", {
             try {
                 let {data} = await fetchWrapper.put(`${baseUrl}operations/complete/${operation.id}`, operation);
     // consolelog('-',data)
+                return true
+            } catch (error) {
+                this.errord = {error};
+    // consolelog(error)
+            } finally {
+                setTimeout(()=>{
+                this.loading = false;
+                    return true
+                }, 2000)
+                // console.log(this.catalogos)
+            }
+        },
+        async deleteItemOp(id) {
+            this.loading = true;
+// consolelog(operation)
+            try {
+                let {data} = await fetchWrapper.delete(`${baseUrl}item_operacion/${id}`);
+  // console.log'delete-',data)
                 return true
             } catch (error) {
                 this.errord = {error};

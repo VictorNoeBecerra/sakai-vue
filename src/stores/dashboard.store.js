@@ -180,17 +180,17 @@ export const useDashboardStore = defineStore({
             return state.labels
         },
         getCobrosDia(state) {
-            return state.totales.cobros
+            return state.totales?.cobros || 0
         },
         getKltsDia(state) {
-            return state.totales.klts
+            return state.totales?.klts || 0
         },
         getUtilidadDia(state) {
-            return state.totales.utilidad
+            return state.totales?.utilidad || 0
         },
 
         getComisionDia(state) {
-            return state.totales.comision
+            return state.totales?.comision || 0
         },
 
         getOperations(state) {
