@@ -69,7 +69,10 @@ module.exports = {
         },
         additionalProperties: false
       }
-    ]
+    ],
+    messages: {
+      incorrectCase: 'Component name "{{name}}" is not {{caseType}}.'
+    }
   },
   /** @param {RuleContext} context */
   create(context) {
@@ -83,9 +86,10 @@ module.exports = {
     /** @type {string[]} */
     const globals = (options.globals || []).map(casing.pascalCase)
     const registeredComponentsOnly = options.registeredComponentsOnly !== false
+    const sourceCode = context.getSourceCode()
     const tokens =
-      context.parserServices.getTemplateBodyTokenStore &&
-      context.parserServices.getTemplateBodyTokenStore()
+      sourceCode.parserServices.getTemplateBodyTokenStore &&
+      sourceCode.parserServices.getTemplateBodyTokenStore()
 
     /** @type { Set<string> } */
     const registeredComponents = new Set(globals)
@@ -120,7 +124,8 @@ module.exports = {
       if (
         (!utils.isHtmlElementNode(node) && !utils.isSvgElementNode(node)) ||
         utils.isHtmlWellKnownElementName(node.rawName) ||
-        utils.isSvgWellKnownElementName(node.rawName)
+        utils.isSvgWellKnownElementName(node.rawName) ||
+        utils.isVueBuiltInElementName(node.rawName)
       ) {
         return false
       }
@@ -156,7 +161,7 @@ module.exports = {
             context.report({
               node: open,
               loc: open.loc,
-              message: 'Component name "{{name}}" is not {{caseType}}.',
+              messageId: 'incorrectCase',
               data: {
                 name,
                 caseType

@@ -11,15 +11,17 @@ const utils = require('../utils')
 module.exports = {
   /** @param {RuleContext} context */
   create(context) {
+    const sourceCode = context.getSourceCode()
     const tokenStore =
-      context.parserServices.getTemplateBodyTokenStore &&
-      context.parserServices.getTemplateBodyTokenStore()
+      sourceCode.parserServices.getTemplateBodyTokenStore &&
+      sourceCode.parserServices.getTemplateBodyTokenStore()
     const visitor = indentCommon.defineVisitor(context, tokenStore, {
       baseIndent: 1
     })
 
     return utils.defineTemplateBodyVisitor(context, visitor)
   },
+  // eslint-disable-next-line eslint-plugin/prefer-message-ids
   meta: {
     type: 'layout',
     docs: {
@@ -27,6 +29,7 @@ module.exports = {
       categories: ['vue3-strongly-recommended', 'strongly-recommended'],
       url: 'https://eslint.vuejs.org/rules/html-indent.html'
     },
+    // eslint-disable-next-line eslint-plugin/require-meta-fixable -- fixer is not recognized
     fixable: 'whitespace',
     schema: [
       {

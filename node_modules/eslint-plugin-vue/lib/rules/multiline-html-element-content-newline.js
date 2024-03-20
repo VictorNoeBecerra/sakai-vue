@@ -34,10 +34,12 @@ function parseOptions(options) {
  */
 function getPhrase(lineBreaks) {
   switch (lineBreaks) {
-    case 0:
+    case 0: {
       return 'no'
-    default:
+    }
+    default: {
       return `${lineBreaks}`
+    }
   }
 }
 /**
@@ -96,10 +98,10 @@ module.exports = {
     const ignores = options.ignores
     const ignoreWhenEmpty = options.ignoreWhenEmpty
     const allowEmptyLines = options.allowEmptyLines
-    const template =
-      context.parserServices.getTemplateBodyTokenStore &&
-      context.parserServices.getTemplateBodyTokenStore()
     const sourceCode = context.getSourceCode()
+    const template =
+      sourceCode.parserServices.getTemplateBodyTokenStore &&
+      sourceCode.parserServices.getTemplateBodyTokenStore()
 
     /** @type {VElement | null} */
     let inIgnoreElement = null

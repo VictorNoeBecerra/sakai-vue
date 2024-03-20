@@ -78,7 +78,7 @@ function getElementType(node) {
  */
 function isEmpty(node, sourceCode) {
   const start = node.startTag.range[1]
-  const end = node.endTag != null ? node.endTag.range[0] : node.range[1]
+  const end = node.endTag == null ? node.range[1] : node.endTag.range[0]
 
   return sourceCode.text.slice(start, end).trim() === ''
 }
@@ -119,6 +119,12 @@ module.exports = {
         }
       ],
       maxItems: 1
+    },
+    messages: {
+      requireSelfClosing:
+        'Require self-closing on {{elementType}} (<{{name}}>).',
+      disallowSelfClosing:
+        'Disallow self-closing on {{elementType}} (<{{name}}/>).'
     }
   },
   /** @param {RuleContext} context */
@@ -131,7 +137,7 @@ module.exports = {
       context,
       {
         VElement(node) {
-          if (hasInvalidEOF) {
+          if (hasInvalidEOF || node.parent.type === 'VDocumentFragment') {
             return
           }
 
@@ -146,14 +152,14 @@ module.exports = {
             context.report({
               node,
               loc: node.loc,
-              message: 'Require self-closing on {{elementType}} (<{{name}}>).',
+              messageId: 'requireSelfClosing',
               data: {
                 elementType: ELEMENT_TYPE_MESSAGES[elementType],
                 name: node.rawName
               },
               fix(fixer) {
                 const tokens =
-                  context.parserServices.getTemplateBodyTokenStore()
+                  sourceCode.parserServices.getTemplateBodyTokenStore()
                 const close = tokens.getLastToken(node.startTag)
                 if (close.type !== 'HTMLTagClose') {
                   return null
@@ -170,15 +176,14 @@ module.exports = {
             context.report({
               node,
               loc: node.loc,
-              message:
-                'Disallow self-closing on {{elementType}} (<{{name}}/>).',
+              messageId: 'disallowSelfClosing',
               data: {
                 elementType: ELEMENT_TYPE_MESSAGES[elementType],
                 name: node.rawName
               },
               fix(fixer) {
                 const tokens =
-                  context.parserServices.getTemplateBodyTokenStore()
+                  sourceCode.parserServices.getTemplateBodyTokenStore()
                 const close = tokens.getLastToken(node.startTag)
                 if (close.type !== 'HTMLSelfClosingTagClose') {
                   return null

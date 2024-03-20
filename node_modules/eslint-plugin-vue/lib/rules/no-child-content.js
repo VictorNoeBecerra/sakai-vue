@@ -70,7 +70,6 @@ function getLocationRange(nodes) {
 
 module.exports = {
   meta: {
-    hasSuggestions: true,
     type: 'problem',
     docs: {
       description:
@@ -79,6 +78,7 @@ module.exports = {
       url: 'https://eslint.vuejs.org/rules/no-child-content.html'
     },
     fixable: null,
+    hasSuggestions: true,
     schema: [
       {
         type: 'object',
@@ -95,7 +95,12 @@ module.exports = {
         },
         required: ['additionalDirectives']
       }
-    ]
+    ],
+    messages: {
+      disallowedChildContent:
+        'Child content is disallowed because it will be overwritten by the v-{{ directiveName }} directive.',
+      removeChildContent: 'Remove child content.'
+    }
   },
   /** @param {RuleContext} context */
   create(context) {
@@ -118,8 +123,8 @@ module.exports = {
         if (elementNode.endTag === null) {
           return
         }
-
-        const tokenStore = context.parserServices.getTemplateBodyTokenStore()
+        const sourceCode = context.getSourceCode()
+        const tokenStore = sourceCode.parserServices.getTemplateBodyTokenStore()
         const elementComments = tokenStore.getTokensBetween(
           elementNode.startTag,
           elementNode.endTag,
@@ -138,12 +143,11 @@ module.exports = {
           context.report({
             node: elementNode,
             loc: getLocationRange(childNodes),
-            message:
-              'Child content is disallowed because it will be overwritten by the v-{{ directiveName }} directive.',
+            messageId: 'disallowedChildContent',
             data: { directiveName },
             suggest: [
               {
-                desc: 'Remove child content.',
+                messageId: 'removeChildContent',
                 *fix(fixer) {
                   for (const childNode of childNodes) {
                     yield fixer.remove(childNode)

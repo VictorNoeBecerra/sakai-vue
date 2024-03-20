@@ -7,6 +7,7 @@
 const indentCommon = require('../utils/indent-common')
 
 module.exports = {
+  // eslint-disable-next-line eslint-plugin/prefer-message-ids
   meta: {
     type: 'layout',
     docs: {
@@ -14,6 +15,7 @@ module.exports = {
       categories: undefined,
       url: 'https://eslint.vuejs.org/rules/script-indent.html'
     },
+    // eslint-disable-next-line eslint-plugin/require-meta-fixable -- fixer is not recognized
     fixable: 'whitespace',
     schema: [
       {

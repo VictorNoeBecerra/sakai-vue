@@ -5,11 +5,15 @@ const casing = require('../utils/casing')
 
 module.exports = {
   meta: {
+    type: 'suggestion',
     docs: {
       description:
         'enforce v-on event naming style on custom components in template',
       categories: ['vue3-strongly-recommended'],
-      url: 'https://eslint.vuejs.org/rules/v-on-event-hyphenation.html'
+      url: 'https://eslint.vuejs.org/rules/v-on-event-hyphenation.html',
+      defaultOptions: {
+        vue3: ['always', { autofix: true }]
+      }
     },
     fixable: 'code',
     schema: [
@@ -36,7 +40,12 @@ module.exports = {
         additionalProperties: false
       }
     ],
-    type: 'suggestion'
+    messages: {
+      // eslint-disable-next-line eslint-plugin/report-message-format
+      mustBeHyphenated: "v-on event '{{text}}' must be hyphenated.",
+      // eslint-disable-next-line eslint-plugin/report-message-format
+      cannotBeHyphenated: "v-on event '{{text}}' can't be hyphenated."
+    }
   },
 
   /** @param {RuleContext} context */
@@ -64,9 +73,7 @@ module.exports = {
       context.report({
         node: node.key,
         loc: node.loc,
-        message: useHyphenated
-          ? "v-on event '{{text}}' must be hyphenated."
-          : "v-on event '{{text}}' can't be hyphenated.",
+        messageId: useHyphenated ? 'mustBeHyphenated' : 'cannotBeHyphenated',
         data: {
           text
         },

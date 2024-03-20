@@ -38,7 +38,7 @@ const isEditing = ref(false);
 const route = useRoute();
 const store = useCatalogosStore()
 
-const currentP = {}
+let currentP = {}
 const genders = ref([
   {label: 'Hombre', value: 'H'},
   {label: 'Mujer', value: 'M'},
@@ -81,6 +81,7 @@ const formatDate = (value) => {
 
 onBeforeMount(() => {
   console.log('beforeMount')
+  console.log('setCurrentP->1 ', props.indx)
   setCurrentP(props.indx)
   store.getSecondaryData();
 });
@@ -93,7 +94,7 @@ onMounted(() => {
 const editProduct = (editProduct) => {
   product.value = {...editProduct};
   isEditing.value = true
-  console.log(product.value);
+  console.log('product.value: ',product.value);
   productDialog.value = true;
 };
 
@@ -130,11 +131,15 @@ const deleteProduct = async () => {
   }
   await store.delete(currentP.routeApi, _id)
   deleteProductDialog.value = false;
+  console.log('',currentP)
+  console.log('setCurrentP->2 ', currentP.key)
+
   setCurrentP(currentP.key)
 
 }
 const saveProduct = async () => {
   submitted.value = true;
+
   console.log('saveProduct', product.value, currentP)
   if (product.value?.id) {
     let body = {}
@@ -168,11 +173,11 @@ const saveProduct = async () => {
     }
     console.log('-----', isEditing.value, isEditing)
     if (isEditing.value === true) {
-      console.log('editing')
-      await store.update(currentP?.value.routeApi, product.value.code, cas)
+      console.log('editing', currentP?.routeApi, product.value.code, cas)
+      await store.update(currentP?.routeApi, product.value.code, cas)
     } else {
       console.log('register', cas)
-      await store.register(currentP?.value.routeApi, cas);
+      await store.register(currentP?.routeApi, cas);
     }
   } else if (product.value.no_ruta && currentP?.value?.key === 'Rutas') {
     const body = product.value;
@@ -180,11 +185,11 @@ const saveProduct = async () => {
 
     if (isEditing.value === true) {
       console.log('editing')
-      await store.update(currentP?.value.routeApi, product.value.no_ruta, body)
+      await store.update(currentP?.routeApi, product.value.no_ruta, body)
 
     } else {
       console.log('register', body)
-      await store.register(currentP?.value.routeApi, body);
+      await store.register(currentP?.routeApi, body);
     }
   } else {
     console.log('Repartidores')
@@ -212,13 +217,13 @@ const saveProduct = async () => {
         }
         break
       default:
-        console.log('default')
+        console.log('default::currentP', currentP?.value)
         break
     }
-    await store.register(currentP?.value.routeApi, product.value)
+    await store.register(currentP?.routeApi, product.value)
   }
   productDialog.value = false;
-  await store.getAll(currentP?.value.routeApi);
+  await store.getAll(currentP?.routeApi);
   // setCurrentP(currentP.value.routeApi)
 
 
@@ -243,6 +248,7 @@ watch(
     () => props.indx,
     (val) => {
       console.log(val)
+      console.log('setCurrentP->3', val)
       setCurrentP(val)
     }
 );
@@ -374,9 +380,9 @@ watch(
 
           <div class="field" v-if="['unidades_de_medida','familias'].includes(currentP?.key)">
             <label for="codigo">Codigo</label>
-            <InputText id="codigo" v-model.trim="product.codigo" required="true" autofocus
-                       :class="{ 'p-invalid': submitted && !product.codigo }"/>
-            <small class="p-invalid" v-if="submitted && !product.codigo">Name is required.</small>
+            <InputText id="codigo" v-model.trim="product.code" required="true" autofocus
+                       :class="{ 'p-invalid': submitted && !product.code }"/>
+            <small class="p-invalid" v-if="submitted && !product.code">Name is required.</small>
           </div>
 
 

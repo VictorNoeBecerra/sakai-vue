@@ -14,7 +14,7 @@ module.exports = {
       categories: ['vue3-strongly-recommended', 'strongly-recommended'],
       url: 'https://eslint.vuejs.org/rules/first-attribute-linebreak.html'
     },
-    fixable: 'whitespace', // or "code" or "whitespace"
+    fixable: 'whitespace',
     schema: [
       {
         type: 'object',
@@ -39,9 +39,10 @@ module.exports = {
     const multiline =
       (context.options[0] && context.options[0].multiline) || 'below'
 
+    const sourceCode = context.getSourceCode()
     const template =
-      context.parserServices.getTemplateBodyTokenStore &&
-      context.parserServices.getTemplateBodyTokenStore()
+      sourceCode.parserServices.getTemplateBodyTokenStore &&
+      sourceCode.parserServices.getTemplateBodyTokenStore()
 
     /**
      * Report attribute
