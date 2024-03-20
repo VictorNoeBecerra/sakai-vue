@@ -138,7 +138,7 @@ const saveProduct = async () => {
   console.log('saveProduct', product.value, currentP)
   if (product.value.id) {
     let body = {}
-    if (currentP.value.key === 'Repartidores') {
+    if (currentP?.value.key === 'Repartidores') {
       const {ruta, sexo, nombres, edad} = product.value;
       body = {
         sexo: sexo.value || sexo,
@@ -149,8 +149,8 @@ const saveProduct = async () => {
     } else {
       body = product.value
     }
-    await store.update(currentP.value.routeApi, product.value.id, body)
-  } else if (currentP.value.key === 'Productos') {
+    await store.update(currentP?.value.routeApi, product.value.id, body)
+  } else if (currentP?.value.key === 'Productos') {
     const body = product.value;
     console.log(body)
     const cas = {
@@ -169,26 +169,26 @@ const saveProduct = async () => {
     console.log('-----', isEditing.value, isEditing)
     if (isEditing.value === true) {
       console.log('editing')
-      await store.update(currentP.value.routeApi, product.value.code, cas)
+      await store.update(currentP?.value.routeApi, product.value.code, cas)
     } else {
       console.log('register', cas)
-      await store.register(currentP.value.routeApi, cas);
+      await store.register(currentP?.value.routeApi, cas);
     }
-  } else if (product.value.no_ruta && currentP.value.key === 'Rutas') {
+  } else if (product.value.no_ruta && currentP?.value.key === 'Rutas') {
     const body = product.value;
     console.log(body)
 
     if (isEditing.value === true) {
       console.log('editing')
-      await store.update(currentP.value.routeApi, product.value.no_ruta, body)
+      await store.update(currentP?.value.routeApi, product.value.no_ruta, body)
 
     } else {
       console.log('register', body)
-      await store.register(currentP.value.routeApi, body);
+      await store.register(currentP?.value.routeApi, body);
     }
   } else {
     console.log('Repartidores')
-    switch (currentP.value.key) {
+    switch (currentP?.value.key) {
       case 'grupos':
         const {familia} = product.value;
         console.log('--', familia)
@@ -215,10 +215,10 @@ const saveProduct = async () => {
         console.log('default')
         break
     }
-    await store.register(currentP.value.routeApi, product.value)
+    await store.register(currentP?.value.routeApi, product.value)
   }
   productDialog.value = false;
-  await store.getAll(currentP.value.routeApi);
+  await store.getAll(currentP?.value.routeApi);
   // setCurrentP(currentP.value.routeApi)
 
 
@@ -253,12 +253,12 @@ watch(
   <div class="grid">
     <div class="col-12">
       <div class="card p-2 py-3">
-        <h5 class="px-4">{{ currentP.title }}</h5>
+        <h5 class="px-4">{{ currentP?.title }}</h5>
 
         <DataTable
             v-model:filters="filters"
             :value="store.dataCatalog"
-            :key="currentP.key"
+            :key="currentP?.key"
             :loading="store.isLoading"
             :paginator="true"
             :rowHover="true"
@@ -287,7 +287,7 @@ watch(
               </div>
             </div>
           </template>
-          <template #empty> {{ currentP.title }} no tiene registros.</template>
+          <template #empty> {{ currentP?.title }} no tiene registros.</template>
           <template #loading> Cargando la información..</template>
           <Column v-for="col of columns" :filterField="col.field" :key="col.field" :field="col.field"
                   :header="col.header">
@@ -323,13 +323,13 @@ watch(
                 class="p-fluid">
           <img :src="'demo/images/product/' + product.image" :alt="product.image" v-if="product.image" width="150"
                class="mt-0 mx-auto mb-5 block shadow-2"/>
-          <div class="field" v-if="['Rutas'].includes(currentP.key)">
+          <div class="field" v-if="['Rutas'].includes(currentP?.key)">
             <label for="no_ruta"># de Ruta</label>
             <InputText id="no_ruta" v-model.trim="product.no_ruta" required="true" autofocus
                        :class="{ 'p-invalid': submitted && !product.no_ruta }"/>
             <small class="p-invalid" v-if="submitted && !product.no_ruta">Ingresa el # ruta.</small>
           </div>
-          <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
+          <div class="formgrid grid" v-if="['Productos'].includes(currentP?.key)">
             <div class="field col">
 
               <label for="code">Codigo</label>
@@ -343,28 +343,28 @@ watch(
               <Checkbox id="autoservicio" v-model.trim="product.autoservicio" :binary="true"/>
             </div>
           </div>
-          <div class="field" v-if="currentP.key==='Repartidores'">
+          <div class="field" v-if="currentP?.key==='Repartidores'">
             <label for="nombres">Nombres</label>
             <InputText id="nombres" v-model.trim="product.nombres" required="true"
                        :class="{ 'p-invalid': submitted && !product.nombres }"/>
             <small class="p-invalid" v-if="submitted && !product.nombres">Name is required.</small>
           </div>
 
-          <div class="field" v-if="['repartidores', 'grupos'].includes(currentP.key)">
+          <div class="field" v-if="['repartidores', 'grupos'].includes(currentP?.key)">
             <label for="nombre">Nombre</label>
             <InputText id="nombre" v-model.trim="product.nombre" required="true"
                        :class="{ 'p-invalid': submitted && !product.nombre }"/>
             <small class="p-invalid" v-if="submitted && !product.nombre">Name is required.</small>
           </div>
           <div class="field"
-               v-if="['Rutas', 'unidades_de_medida', 'familias'].includes(currentP.key)">
+               v-if="['Rutas', 'unidades_de_medida', 'familias'].includes(currentP?.key)">
             <label for="descripcion">Descripcion</label>
             <InputText id="descripcion" v-model.trim="product.descripcion" required="true"
                        :class="{ 'p-invalid': submitted && !product.descripcion }"/>
             <small class="p-invalid" v-if="submitted && !product.descripcion">descripcion is required.</small>
           </div>
           <div class="field"
-               v-if="['grupos',  'factores_de_conversión','Productos'].includes(currentP.key)">
+               v-if="['grupos',  'factores_de_conversión','Productos'].includes(currentP?.key)">
             <label for="description">Descripcion</label>
             <InputText id="description" v-model.trim="product.description" required="true"
                        :class="{ 'p-invalid': submitted && !product.description }"/>
@@ -372,7 +372,7 @@ watch(
           </div>
 
 
-          <div class="field" v-if="['unidades_de_medida','familias'].includes(currentP.key)">
+          <div class="field" v-if="['unidades_de_medida','familias'].includes(currentP?.key)">
             <label for="codigo">Codigo</label>
             <InputText id="codigo" v-model.trim="product.codigo" required="true" autofocus
                        :class="{ 'p-invalid': submitted && !product.codigo }"/>
@@ -380,7 +380,7 @@ watch(
           </div>
 
 
-          <div class="field" v-if="['grupos'].includes(currentP.key)">
+          <div class="field" v-if="['grupos'].includes(currentP?.key)">
             <label for="inventoryStatus" class="mb-3">Familia</label>
             <Dropdown id="inventoryStatus" v-model="product.familia" :options="store.getFamilias" optionLabel="label"
                       placeholder="Selecciona la familia">
@@ -402,7 +402,7 @@ watch(
           </div>
 
 
-          <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
+          <div class="formgrid grid" v-if="['Productos'].includes(currentP?.key)">
             <div class="field col">
               <label for="precio">$ Compra</label>
               <InputNumber id="precio" v-model="product.precio_compra" mode="currency" currency="MXN" lolocale="es-MX"
@@ -428,7 +428,7 @@ watch(
             </div>
 
           </div>
-          <div class="formgrid grid" v-if="['Repartidores'].includes(currentP.key)">
+          <div class="formgrid grid" v-if="['Repartidores'].includes(currentP?.key)">
             <div class="field col">
               <label for="sexo">Genero</label>
               <Dropdown id="sexo" v-model="product.sexo" :options="genders" optionLabel="value"
@@ -456,7 +456,7 @@ watch(
             </div>
 
           </div>
-          <div class="field" v-if="['Repartidores'].includes(currentP.key)">
+          <div class="field" v-if="['Repartidores'].includes(currentP?.key)">
             <label for="ruta" class="mb-3">Ruta</label>
             <Dropdown id="ruta" v-model="product.ruta" :options="store.getRutas" optionLabel="value"
                       placeholder="Selecciona la ruta">
@@ -475,7 +475,7 @@ watch(
               </template>
             </Dropdown>
           </div>
-          <div class="formgrid grid" v-if="['factores_de_conversión'].includes(currentP.key)">
+          <div class="formgrid grid" v-if="['factores_de_conversión'].includes(currentP?.key)">
             <div class="field col">
               <label for="um">U. origen</label>
               <Dropdown id="um" v-model="product.um" :options="store.getUnidadesMedida" optionLabel="label"
@@ -524,7 +524,7 @@ watch(
             </div>
 
           </div>
-          <div class="formgrid grid" v-if="['Productos'].includes(currentP.key)">
+          <div class="formgrid grid" v-if="['Productos'].includes(currentP?.key)">
             <div class="field col">
               <label for="cont">Cont</label>
               <InputNumber id="cont" v-model="product.content" mode="decimal"
@@ -561,7 +561,7 @@ watch(
             </div>
           </div>
 
-          <div class="field" v-if="['Productos'].includes(currentP.key)">
+          <div class="field" v-if="['Productos'].includes(currentP?.key)">
             <label for="grupos" class="mb-3">Grupo</label>
             <Dropdown id="grupos" v-model="product.grupo" :options="store.getGrupos" optionLabel="label"
                       placeholder="Selecciona la un grupo">
