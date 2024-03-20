@@ -136,9 +136,9 @@ const deleteProduct = async () => {
 const saveProduct = async () => {
   submitted.value = true;
   console.log('saveProduct', product.value, currentP)
-  if (product.value.id) {
+  if (product.value?.id) {
     let body = {}
-    if (currentP?.value.key === 'Repartidores') {
+    if (currentP?.value?.key === 'Repartidores') {
       const {ruta, sexo, nombres, edad} = product.value;
       body = {
         sexo: sexo.value || sexo,
@@ -149,8 +149,8 @@ const saveProduct = async () => {
     } else {
       body = product.value
     }
-    await store.update(currentP?.value.routeApi, product.value.id, body)
-  } else if (currentP?.value.key === 'Productos') {
+    await store.update(currentP?.value?.routeApi, product.value?.id, body)
+  } else if (currentP?.value?.key === 'Productos') {
     const body = product.value;
     console.log(body)
     const cas = {
@@ -174,7 +174,7 @@ const saveProduct = async () => {
       console.log('register', cas)
       await store.register(currentP?.value.routeApi, cas);
     }
-  } else if (product.value.no_ruta && currentP?.value.key === 'Rutas') {
+  } else if (product.value.no_ruta && currentP?.value?.key === 'Rutas') {
     const body = product.value;
     console.log(body)
 
@@ -188,7 +188,7 @@ const saveProduct = async () => {
     }
   } else {
     console.log('Repartidores')
-    switch (currentP?.value.key) {
+    switch (currentP?.value?.key) {
       case 'grupos':
         const {familia} = product.value;
         console.log('--', familia)
