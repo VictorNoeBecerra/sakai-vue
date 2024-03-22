@@ -51,14 +51,18 @@ let columns = [
   {field: 'quantity', header: 'Quantity'}
 ];
 const setCurrentP = (param) => {
-  currentP.key = param;
-  currentP.title = frmat(param);
-  const {routeApi, properties} = getCurrentColumns(currentP.title)[0]
+
+  console.log('\t\tsetCurrentP', param)
+  const {routeApi, properties} = getCurrentColumns(frmat(param) )[0]
+  currentP = {
+    key:param,
+    title : frmat(param),
+    routeApi
+  }
   columns = properties;
   currentP.routeApi = routeApi;
   store.getAll(routeApi);
-  console.log('setCurrentP-> ', getCurrentColumns(currentP.title))
-  console.log('setCurrentP-> ', currentP, columns)
+  console.log('\t\tsetCurrentP-> ', currentP, columns)
 }
 const props = defineProps({
   indx: {type: String, default: 'ss'},
@@ -80,6 +84,7 @@ const formatDate = (value) => {
 // };
 
 onBeforeMount(() => {
+  console.count('onBeforeMount()')
   console.log('beforeMount')
   console.log('setCurrentP->1 ', props.indx)
   setCurrentP(props.indx)
@@ -143,7 +148,7 @@ const saveProduct = async () => {
   console.log('saveProduct', product.value, currentP)
   if (product.value?.id) {
     let body = {}
-    if (currentP?.value?.key === 'Repartidores') {
+    if (currentP?.key === 'Repartidores') {
       const {ruta, sexo, nombres, edad} = product.value;
       body = {
         sexo: sexo.value || sexo,
@@ -154,12 +159,13 @@ const saveProduct = async () => {
     } else {
       body = product.value
     }
-    await store.update(currentP?.value?.routeApi, product.value?.id, body)
-  } else if (currentP?.value?.key === 'Productos') {
-    const body = product.value;
-    console.log(body)
-    const cas = {
+    await store.update(currentP?.routeApi, product.value?.id, body)
+  } else if (currentP?.key === 'Productos') {
 
+
+    const body = product.value;
+    console.log('body: ', body)
+    const newBody = {
       code: body.code,
       autoservicio: body.autoservicio,
       description: body.description,
@@ -171,15 +177,16 @@ const saveProduct = async () => {
       um: body.um.id,
       grupo: body.grupo.id,
     }
-    console.log('-----', isEditing.value, isEditing)
+    console.log('newBody: ', newBody)
+    console.log('----- is Editing: ', isEditing.value, isEditing)
     if (isEditing.value === true) {
-      console.log('editing', currentP?.routeApi, product.value.code, cas)
-      await store.update(currentP?.routeApi, product.value.code, cas)
+      console.log('\tediting', currentP?.routeApi, product.value.code, newBody)
+      await store.update(currentP?.routeApi, product.value.code, newBody)
     } else {
-      console.log('register', cas)
-      await store.register(currentP?.routeApi, cas);
+      console.log('\tregister', newBody)
+      await store.register(currentP?.routeApi, newBody);
     }
-  } else if (product.value.no_ruta && currentP?.value?.key === 'Rutas') {
+  } else if (product.value.no_ruta && currentP?.key === 'Rutas') {
     const body = product.value;
     console.log(body)
 
@@ -192,8 +199,10 @@ const saveProduct = async () => {
       await store.register(currentP?.routeApi, body);
     }
   } else {
-    console.log('Repartidores')
-    switch (currentP?.value?.key) {
+    console.log('-----------------------')
+    console.log('ELSE BEFORE SWITCH');
+    console.log('else: ', currentP?.key , currentP?.value )
+    switch (currentP?.key) {
       case 'grupos':
         const {familia} = product.value;
         console.log('--', familia)

@@ -95,7 +95,7 @@ const clearViewInfo = () => {
 const showProducts = () => {
   const dialogRef = dialog.open(ProductListDemo, {
     props: {
-      header: 'Capturas de hoy',
+      header: 'Capturas de los ultimos 3 meses',
       style: {
         width: '40rem',
         display: 'flex'
@@ -614,7 +614,7 @@ const formatDate = (date) => {
           </div>
           <div class="field col-12 md:col-2">
             <ConfirmPopup></ConfirmPopup>
-            <Button label="Capturas de hoy" :disabled="storeReport.getOperacionesCount === 0" severity="info"
+            <Button label="Mostrar Capturas" severity="info"
               icon="pi pi-external-link" @click="confirmLeaveCurrentOp" />
             <DynamicDialog />
           </div>

@@ -19,7 +19,7 @@ export const useReportStore = defineStore({
         },
         getOperaciones(state) {
             console.log(state.operaciones)
-            return [...state.operaciones];
+            return [...state.operaciones.reverse()];
         },
         getOperacionesCount(state) {
             return state.operaciones_hoy;
