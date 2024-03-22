@@ -18,7 +18,7 @@ export const useReportStore = defineStore({
             return state.repartidores;
         },
         getOperaciones(state) {
-            console.log(state.operaciones)
+            // console.log(state.operaciones)
             return [...state.operaciones.reverse()];
         },
         getOperacionesCount(state) {
