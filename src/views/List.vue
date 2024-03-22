@@ -49,7 +49,7 @@ const formatDate = (date) => {
 
 <template>
   <template v-if="store.getOperaciones.length">
-    <DataView :value="store.getOperaciones" :layout="'list'" :paginator="true" :rows=18 :sortOrder="sortOrder"
+    <DataView :value="store.getOperaciones" :layout="'list'" :paginator="true" :rows=10 :sortOrder="sortOrder"
               :sortField="sortField">
       <template #list="slotProps">
         <div class="col-12 bg-black-alpha-50/500'">
