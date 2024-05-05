@@ -1,17 +1,20 @@
-// /* eslint-env node */
-// require('@rushstack/eslint-patch/modern-module-resolution');
+/* eslint-env node */
+require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     root: true,
-    extends: [],
-    plugins:[
-        'import'
-    ],
-    parserOptions: {},
+    extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/eslint-config-prettier'],
+    parserOptions: {
+        ecmaVersion: 'latest'
+    },
     rules: {
-        // Reglas específicas de eslint-plugin-import
-        'import':'off',
-        'import/no-unresolved': 'off', // Deshabilitar advertencia de módulos no resueltos
-        'import/extensions': 'off', // Deshabilitar advertencia de extensiones de archivo en importaciones
+        'vue/multi-word-component-names': 'off',
+        'vue/no-reserved-component-names': 'off',
+        'vue/component-tags-order': [
+            'error',
+            {
+                order: ['script', 'template', 'style']
+            }
+        ]
     }
 };

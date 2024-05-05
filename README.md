@@ -1,9 +1,3 @@
-Sello Rojo la piedad
-
-App client  
-
-
-
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Customize configuration

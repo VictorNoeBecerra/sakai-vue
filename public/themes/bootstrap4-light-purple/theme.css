@@ -1,10 +1,3 @@
-@font-face {
-  font-family: 'Assistant';
-  src: url('src/assets/Assistant/Assistant-VariableFont_wght.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
 :root {
   --surface-a:#ffffff;
   --surface-b:#efefef;
@@ -14,9 +7,9 @@
   --surface-f:#ffffff;
   --text-color:#212529;
   --text-color-secondary:#6c757d;
-  --primary-color: #ae3c3c;
+  --primary-color:#883cae;
   --primary-color-text:#ffffff;
-  --font-family: 'Assistant', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  --font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
   --surface-0: #ffffff;
   --surface-50: #f9fafb;
   --surface-100: #f8f9fa;
